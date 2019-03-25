@@ -4,10 +4,13 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 def busca_sequencial(lista, alvo):
-    for i in range(len(lista)):
+    i = 0
+    # for i in range(len(lista)):
+    while i < len(lista):
         # print(i)
         if lista[i] == alvo:
             return i
+        i += 1
     return -1
 
 def busca_sequencial_com_sentinela(lista, alvo):
@@ -40,6 +43,7 @@ def busca_binaria(lista, alvo):
     return -1
 
 # pip3 install matplotlib
+# pip3 install python3-tk
 def plota_grafico(sequencial, binaria, sequencial_com_sentinela):
     plt.ylabel('time')
     plt.bar("binaria", binaria)
@@ -64,7 +68,6 @@ fim = time()
 
 sequencial = Decimal(fim - inicio)
 print(Decimal(fim - inicio))
-
 
 inicio = time()
 print("\n", busca_sequencial_com_sentinela(lista, 750))
