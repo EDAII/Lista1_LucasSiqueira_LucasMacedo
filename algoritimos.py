@@ -45,14 +45,23 @@ def busca_binaria(lista, alvo):
 
 # pip3 install matplotlib
 # pip3 install python3-tk
-def plota_grafico(binaria, sequencial_com_sentinela, sequencial):
-    plt.ylabel('time')
+def plota_grafico(binaria, sequencial_com_sentinela, sequencial, label):
+    plt.ylabel(label)
     plt.bar("binaria", binaria)
     plt.bar("sequencial com sentinela",sequencial_com_sentinela)
     plt.bar("sequencial", sequencial)
     plt.show()
 
+def define_media(lista):
+    i = 0
+    resultado = 0
+    for i in range(len(lista)):
+        resultado += lista[i]
+    return resultado / i
 
+resultado_binaria = []
+resultado_sequencial = []
+resultado_sequencial_sentinela = []
 wins_binaria = 0
 wins_sequencial = 0
 wins_sequencial_sentinela = 0
@@ -61,35 +70,28 @@ aux = 0
 while aux != 1000:
     lista = [x for x in range(randint(1,1001))]
 
-    # print(len(lista))
-
     numero_aleatoriio = randint(1,len(lista))
 
     inicio = time()
-
-    print("\n", busca_binaria(lista, numero_aleatoriio))
-    # busca_binaria(lista, numero_aleatoriio)
+    busca_binaria(lista, numero_aleatoriio)
     fim = time()
 
     binaria = Decimal(fim - inicio)
-    print(Decimal(fim - inicio))
+    resultado_binaria.append(binaria)
 
     inicio = time()
-    print("\n", busca_sequencial(lista, numero_aleatoriio))
-    # busca_sequencial(lista, numero_aleatoriio)
+    busca_sequencial(lista, numero_aleatoriio)
     fim = time()
 
     sequencial = Decimal(fim - inicio)
-    print(Decimal(fim - inicio))
+    resultado_sequencial.append(sequencial)
 
     inicio = time()
-    print("\n", busca_sequencial_com_sentinela(lista, numero_aleatoriio))
-    # busca_sequencial_com_sentinela(lista, numero_aleatoriio)
+    busca_sequencial_com_sentinela(lista, numero_aleatoriio)
     fim = time()
 
     sequencial_com_sentinela = Decimal(fim - inicio)
-
-    print(Decimal(fim - inicio))
+    resultado_sequencial_sentinela.append(sequencial_com_sentinela)
 
     if sequencial < binaria and sequencial < sequencial_com_sentinela:
         wins_sequencial += 1
@@ -100,7 +102,10 @@ while aux != 1000:
 
     aux += 1
 
-print("\n\t \t \tResultado em Wins: \n Sequencial:" + str(wins_sequencial) + '\n',"Binaria:" + str(wins_binaria) + '\n',"Sequencial com sentinela:" + str(wins_sequencial_sentinela) + '\n')
+print("\n\t \t \tResultado em Wins: \n Binaria:" + str(wins_binaria) + '\n' ,"Sequencial:" + str(wins_sequencial) + '\n',"Sequencial com sentinela:" + str(wins_sequencial_sentinela) + '\n')
 print("Empate entre pelo menos dois algoritmos de busca: " + str(aux - (wins_sequencial + wins_binaria + wins_sequencial_sentinela)))
+print("\n\t\tMédia de tempo\n")
+print("Binaria:" + str(define_media(resultado_binaria)), "Sequencial:" + str(define_media(resultado_sequencial)),"Sequencial com sentinela:" + str(define_media(resultado_sequencial_sentinela)))
 
-plota_grafico(wins_binaria, wins_sequencial_sentinela, wins_sequencial)
+plota_grafico(wins_binaria, wins_sequencial_sentinela, wins_sequencial, 'Wins')
+plota_grafico(define_media(resultado_binaria), define_media(resultado_sequencial_sentinela), define_media(resultado_sequencial), 'Média de tempo')
