@@ -89,7 +89,7 @@ while aux != 1000:
     resultado_sequencial.append(sequencial)
 
     inicio = time()
-    busca_sequencial_com_sentinela(lista, numero_aleatoriio)
+    busca_sequencial_com_sentinela(lista, numero_aleatorio)
     fim = time()
 
     sequencial_com_sentinela = Decimal(fim - inicio)
