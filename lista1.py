@@ -3,6 +3,7 @@ from decimal import Decimal
 from random import randint
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
 def busca_sequencial(lista, alvo):
     i = 0
@@ -47,9 +48,24 @@ def busca_binaria(lista, alvo):
 # pip3 install python3-tk
 def plota_grafico(binaria, sequencial_com_sentinela, sequencial, label):
     plt.ylabel(label)
-    plt.bar("binaria", binaria)
-    plt.bar("sequencial com sentinela",sequencial_com_sentinela)
-    plt.bar("sequencial", sequencial)
+    plt.bar("Binaria", binaria)
+    plt.bar("Sequencial com Sentinela",sequencial_com_sentinela)
+    plt.bar("Sequencial", sequencial)
+    plt.show()
+
+def func(pct, allvals):
+    absolute = int(pct/100.*np.sum(allvals))
+    return "{:.1f}%\n({:d} wins)".format(pct, absolute)
+
+def plota_grafico_pizza(binaria, sequencial_com_sentinela, sequencial):
+    labels = ['Binaria', 'Sequencial com Sentinela', 'Sequencial']
+    valores = [binaria, sequencial_com_sentinela, sequencial]
+    fig, ax = plt.subplots(figsize=(12, 9), subplot_kw=dict(aspect="equal"))
+    wedges, texts, autotexts = ax.pie(valores, autopct=lambda pct: func(pct, valores), textprops=dict(color="w"))
+    ax.legend(wedges, labels, title="Algoritimos", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+    plt.setp(autotexts, size=8, weight="bold")
+    ax.set_title("Algoritimos de Busca")
+
     plt.show()
 
 def define_media(lista):
@@ -67,7 +83,7 @@ wins_sequencial = 0
 wins_sequencial_sentinela = 0
 aux = 0
 
-while aux != 1000:
+for aux in range(1000):
     # Define uma lista já ordenada com tamanho aléatorio no intervalo (1,1001)
     lista = [x for x in range(randint(1,1001))]
 
@@ -102,12 +118,11 @@ while aux != 1000:
     elif sequencial_com_sentinela < binaria and sequencial_com_sentinela < sequencial:
         wins_sequencial_sentinela += 1
 
-    aux += 1
-
 print("\n\t \t \tResultado em Wins: \n Binaria:" + str(wins_binaria) + '\n' ,"Sequencial:" + str(wins_sequencial) + '\n',"Sequencial com sentinela:" + str(wins_sequencial_sentinela) + '\n')
 print("Empate entre pelo menos dois algoritmos de busca: " + str(aux - (wins_sequencial + wins_binaria + wins_sequencial_sentinela)))
 print("\n\t\tMédia de tempo\n")
 print("Binaria:" + str(define_media(resultado_binaria)), "\nSequencial:" + str(define_media(resultado_sequencial)),"\nSequencial com sentinela:" + str(define_media(resultado_sequencial_sentinela)))
 
-plota_grafico(wins_binaria, wins_sequencial_sentinela, wins_sequencial, 'Wins')
-plota_grafico(define_media(resultado_binaria), define_media(resultado_sequencial_sentinela), define_media(resultado_sequencial), 'Média de tempo')
+plota_grafico_pizza(wins_binaria, wins_sequencial_sentinela, wins_sequencial)
+# plota_grafico(wins_binaria, wins_sequencial_sentinela, wins_sequencial, 'Wins')
+plota_grafico(define_media(resultado_binaria), define_media(resultado_sequencial_sentinela), define_media(resultado_sequencial), 'Média de Tempo')
