@@ -6,29 +6,19 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
 def busca_interpolada(lista, alvo): 
-    # Procura os indices maximo e minimo 
     lo = 0
     hi = (len(lista) - 1) 
    
-    # Since array is sorted, an element present 
-    # in array must be in range defined by corner 
     while lo <= hi and alvo >= lista[lo] and alvo <= lista[hi]: 
-        # Probing the position with keeping 
-        # uniform distribution in mind. 
         pos  = lo + int(((float(hi - lo) / 
             ( lista[hi] - lista[lo])) * ( alvo - lista[lo]))) 
   
-        # Condition of target found 
         if lista[pos] == alvo: 
             return pos 
-   
-        # If x is larger, x is in upper part 
         if lista[pos] < alvo: 
-            lo = pos + 1; 
-   
-        # If x is smaller, x is in lower part 
+            lo = pos + 1 
         else: 
-            hi = pos - 1; 
+            hi = pos - 1 
       
     return -1
 
@@ -53,12 +43,10 @@ def busca_sequencial_com_sentinela(lista, alvo):
 def busca_binaria(lista, alvo):
     primeiro = 0
     ultimo = len(lista) - 1
-
     i = 0
+
     while primeiro <= ultimo:
         meio = (primeiro + ultimo) // 2
-
-        #print(i, meio)
         i += 1
 
         if lista[meio] == alvo:
@@ -68,16 +56,15 @@ def busca_binaria(lista, alvo):
                 ultimo = meio - 1
             else:
                 primeiro = meio + 1
+
     return -1
 
-# pip3 install matplotlib
-# pip3 install python3-tk
-def plota_grafico(binaria, sequencial_com_sentinela, sequencial, interpolada, label):
-    plt.ylabel(label)
-    plt.bar('Interpolada', interpolada)
-    plt.bar('Binaria', binaria)
-    plt.bar('Sequencial com Sentinela', sequencial_com_sentinela)
-    plt.bar('Sequencial', sequencial)
+def plota_grafico(averages):
+    plt.ylabel('Media de Tempo')
+
+    for key in averages.keys():
+        plt.bar(key, averages[key])
+
     plt.show()
 
 def func(pct, allvals):
@@ -94,72 +81,57 @@ def plota_grafico_pizza(wins):
     ax.set_title("Algoritimos de Busca")
     plt.show()
 
-def define_media(lista):
-    i = 0
-    resultado = 0
-    for i in range(len(lista)):
-        resultado += lista[i]
-    return resultado / i
+def calc_media(results):
+    averages = {}
 
-resultado_interpolada = []
-resultado_binaria = []
-resultado_sequencial = []
-resultado_sequencial_sentinela = []
-wins = {'Sequencial': 0, 'Interpolada': 0, 'Sequencial_Sentinela': 0, 'Binaria': 0}
+    for key in results.keys():
+        averages[key] = sum(results[key]) / len(results[key])
+    return averages
 
-for aux in range(1000):
-    # Define uma lista já ordenada com tamanho aléatorio no intervalo (1,1001)
-    lista = [x for x in range(randint(1,1001))]
+if __name__ == '__main__':
+    results = {'Sequencial': [], 'Interpolada': [], 'Sequencial_Sentinela': [], 'Binaria': []}
+    result = {'Sequencial': 0, 'Interpolada': 0, 'Sequencial_Sentinela': 0, 'Binaria': 0}
+    wins = {'Sequencial': 0, 'Interpolada': 0, 'Sequencial_Sentinela': 0, 'Binaria': 0}
 
-    #Define um número aleatorio da lista a ser buscado
-    numero_aleatorio = randint(1,len(lista))
+    for aux in range(1000):
+        lista = [x for x in range(randint(1,1001))]
+        numero_aleatorio = randint(1,len(lista))
 
-    inicio = time()
-    busca_interpolada(lista, numero_aleatorio)
-    fim = time()
+        for key in result.keys():
+            if key == 'Sequencial':
+                inicio = time()
+                busca_sequencial(lista, numero_aleatorio)
+            elif key == 'Sequencial_Sentinela':
+                inicio = time()
+                busca_sequencial_com_sentinela(lista, numero_aleatorio)
+            elif key == 'Binaria':
+                inicio = time()
+                busca_binaria(lista, numero_aleatorio)
+            else: 
+                inicio = time()
+                busca_interpolada(lista, numero_aleatorio)
+    
+            fim = time()
+            tempo = Decimal(fim - inicio)
 
-    interpolada = Decimal(fim - inicio)
-    resultado_interpolada.append(interpolada)
+            result[key] = tempo
+            results[key].append(tempo)
 
-    inicio = time()
-    busca_binaria(lista, numero_aleatorio)
-    fim = time()
+        lis = list(result.items())
+        winner = min(lis,key=lambda item:item[1])
 
-    binaria = Decimal(fim - inicio)
-    resultado_binaria.append(binaria)
+        wins[winner[0]] += 1
 
-    inicio = time()
-    busca_sequencial(lista, numero_aleatorio)
-    fim = time()
+    averages = calc_media(results)
 
-    sequencial = Decimal(fim - inicio)
-    resultado_sequencial.append(sequencial)
+    print('\n\t \t \tResultado em Wins:')
+    for key in wins.keys():
+        print(key + ': ' + str(wins[key]))
 
-    inicio = time()
-    busca_sequencial_com_sentinela(lista, numero_aleatorio)
-    fim = time()
+    print('\n\t \t \tMedia de Tempo:')
+    for key in averages.keys():
+        print(key + ': ' + str(averages[key]))
+    
+    plota_grafico_pizza(wins)
+    plota_grafico(averages)
 
-    sequencial_com_sentinela = Decimal(fim - inicio)
-    resultado_sequencial_sentinela.append(sequencial_com_sentinela)
-
-    lis = [('Sequencial', sequencial), ('Sequencial_Sentinela', sequencial_com_sentinela), ('Binaria', binaria), ('Interpolada', interpolada)]
-    winner = min(lis,key=lambda item:item[1])
-
-    wins[winner[0]] += 1
-
-print('\n\t \t \tResultado em Wins:')
-print('Binaria:' + str(wins['Binaria']))
-print('Sequencial:' + str(wins['Sequencial']))
-print('Sequencial com sentinela:' + str(wins['Sequencial_Sentinela']))
-print('Interpolada:' + str(wins['Interpolada']))
-# print('Empate entre pelo menos dois algoritmos de busca: ' + str(aux - sum(wins.values())))
-
-print('\n\t\tMédia de tempo\n')
-print('Binaria: ' + str(define_media(resultado_binaria)))
-print('Sequencial: ' + str(define_media(resultado_sequencial)))
-print('Sequencial com sentinela: ' + str(define_media(resultado_sequencial_sentinela)))
-print('Interpolada: ' + str(define_media(resultado_interpolada)))
-
-plota_grafico_pizza(wins)
-# plota_grafico(wins_binaria, wins_sequencial_sentinela, wins_sequencial, 'Wins')
-plota_grafico(define_media(resultado_binaria), define_media(resultado_sequencial_sentinela), define_media(resultado_sequencial), define_media(resultado_interpolada), 'Média de Tempo')
