@@ -15,5 +15,7 @@ e outro para análise da média dos tempos.</p>
 
 ## Para executar o algoritmo:
 > sudo apt-get install python3-tk
+
 > pip3 install -r requirements.txt
+
 > python3 lista1.py
