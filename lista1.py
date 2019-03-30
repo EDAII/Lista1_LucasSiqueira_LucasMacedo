@@ -15,9 +15,8 @@ def cria_tabela_de_indexes(lista, intervalo):
     return tabela_de_indexes
 
 
-# Compara o alvo com o indice e retorna o indice mais "perto" do alvo
+# Compara o alvo com os indices e retorna o indice mais "perto" do alvo
 def procura_index(indices, alvo):
-
     auxiliarIndex = 0
 
     for i in indices:
