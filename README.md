@@ -13,7 +13,7 @@ esse processo se repete 1000 vezes e todos os tempos são armazenados para obter
 Com os dados coletados são gerados dois gráficos, um para análise das "vítorias" de cada algoritmo
 e outro para análise da média dos tempos.</p>
 
-## Para executar o algoritmo:
+## Para executar:
 > sudo apt-get install python3-tk
 
 > pip3 install -r requirements.txt
