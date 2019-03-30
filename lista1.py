@@ -5,21 +5,53 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-def busca_interpolada(lista, alvo): 
+
+# Cria a tabela de index com o intervalo decidido
+def cria_tabela_de_indexes(lista, intervalo):
+    tabela_de_indexes = []
+
+    for posicao in range(intervalo, len(lista), intervalo):
+        tabela_de_indexes.append([posicao,lista[posicao]])
+    return tabela_de_indexes
+
+
+# Compara o alvo com o indice e retorna o indice mais "perto" do alvo
+def procura_index(indices, alvo):
+
+    auxiliarIndex = 0
+
+    for i in indices:
+        if alvo >= i[1]:
+            auxiliarIndex = i[0]
+
+    return auxiliarIndex
+
+def busca_indexada(indices, lista, alvo):
+    valorEncontrado = False
+    index = procura_index(indices, alvo)
+
+    for i in range(index,len(lista)):
+        if lista[i] == alvo:
+            return True
+
+    if(valorEncontrado == False):
+        return False
+
+def busca_interpolada(lista, alvo):
     lo = 0
-    hi = (len(lista) - 1) 
-   
-    while lo <= hi and alvo >= lista[lo] and alvo <= lista[hi]: 
-        pos  = lo + int(((float(hi - lo) / 
-            ( lista[hi] - lista[lo])) * ( alvo - lista[lo]))) 
-  
-        if lista[pos] == alvo: 
-            return pos 
-        if lista[pos] < alvo: 
-            lo = pos + 1 
-        else: 
-            hi = pos - 1 
-      
+    hi = (len(lista) - 1)
+
+    while lo <= hi and alvo >= lista[lo] and alvo <= lista[hi]:
+        pos  = lo + int(((float(hi - lo) /
+            ( lista[hi] - lista[lo])) * ( alvo - lista[lo])))
+
+        if lista[pos] == alvo:
+            return pos
+        if lista[pos] < alvo:
+            lo = pos + 1
+        else:
+            hi = pos - 1
+
     return -1
 
 def busca_sequencial(lista, alvo):
@@ -89,9 +121,9 @@ def calc_media(results):
     return averages
 
 if __name__ == '__main__':
-    results = {'Sequencial': [], 'Interpolada': [], 'Sequencial_Sentinela': [], 'Binaria': []}
-    result = {'Sequencial': 0, 'Interpolada': 0, 'Sequencial_Sentinela': 0, 'Binaria': 0}
-    wins = {'Sequencial': 0, 'Interpolada': 0, 'Sequencial_Sentinela': 0, 'Binaria': 0}
+    results = {'Sequencial': [], 'Interpolada': [], 'Sentinela': [], 'Binaria': [], 'Indexada': []}
+    result = {'Sequencial': 0, 'Interpolada': 0, 'Sentinela': 0, 'Binaria': 0, 'Indexada': 0}
+    wins = {'Sequencial': 0, 'Interpolada': 0, 'Sentinela': 0, 'Binaria': 0, 'Indexada':0}
 
     for aux in range(1000):
         lista = [x for x in range(randint(1,1001))]
@@ -101,16 +133,20 @@ if __name__ == '__main__':
             if key == 'Sequencial':
                 inicio = time()
                 busca_sequencial(lista, numero_aleatorio)
-            elif key == 'Sequencial_Sentinela':
+            elif key == 'Sentinela':
                 inicio = time()
                 busca_sequencial_com_sentinela(lista, numero_aleatorio)
             elif key == 'Binaria':
                 inicio = time()
                 busca_binaria(lista, numero_aleatorio)
-            else: 
+            elif key == 'Indexada':
+                index = cria_tabela_de_indexes(lista, 6)
+                inicio = time()
+                busca_indexada(index, lista, numero_aleatorio)
+            else:
                 inicio = time()
                 busca_interpolada(lista, numero_aleatorio)
-    
+
             fim = time()
             tempo = Decimal(fim - inicio)
 
@@ -131,7 +167,6 @@ if __name__ == '__main__':
     print('\n\t \t \tMedia de Tempo:')
     for key in averages.keys():
         print(key + ': ' + str(averages[key]))
-    
+
     plota_grafico_pizza(wins)
     plota_grafico(averages)
-
