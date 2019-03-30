@@ -1,6 +1,7 @@
 # Lista 1 Buscas
 ## Alunos:
 Lucas Siqueira - 15/0137567
+
 Lucas Macedo - 15/0137397
 
 ## Descrição:
